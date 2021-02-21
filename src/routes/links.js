@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
-const pool= require('../database');
+const sql= require('../database');
 
 router.get('/add',(req,res)=>{
     res.render('links/add');
 });
-router.post('/add', async(req,res)=>{
+router.post('/add',async(req,res)=>{
     const { titulo,url,descripcion } = req.body;
     
     const newLinks={
@@ -15,8 +15,16 @@ router.post('/add', async(req,res)=>{
         descripcion
     };
 
-    await pool.query('INSERT INTO links set ?',[newLinks]);
-    res.send('recibido');
+    console.log(newLinks);
+
+    await sql.query('INSERT INTO links set ?',[newLinks]);
+    res.redirect('links/');
+});
+
+router.get('/',(req,res)=>{
+    const links =  sql.query('SELECT * FROM links');
+    console.log(links);
+    res.render('links/list',{ links });
 });
 
 module.exports = router;
